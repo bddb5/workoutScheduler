@@ -8,7 +8,6 @@ public class WorkoutSchedulerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WorkoutSchedulerApplication.class, args);
-		// hello
 	}
 
 }
