@@ -26,7 +26,6 @@ public class UserModel {
 
     public UserModel(){
     }
-
     public UserModel(String id,String firstName,String lastName,int age,String email,String phoneNumber){
         this.id = id;
         this.firstName = firstName;

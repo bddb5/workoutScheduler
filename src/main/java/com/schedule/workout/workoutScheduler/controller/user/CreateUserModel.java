@@ -26,7 +26,6 @@ public class CreateUserModel {
 
 
     public CreateUserModel(){
-
     }
     public CreateUserModel(String id,String firstName,String lastName,int age,String email,String phoneNumber){
         this.id = id;

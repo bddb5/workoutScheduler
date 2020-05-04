@@ -20,48 +20,52 @@ public class UsersService {
     private IUsersRepository usersRepository;
 
     //create user
-    public UserDB createUser(CreateUserModel createUserModel) {
+    public CreateUserModel createUser(CreateUserModel createUserModel) {
         UserDB userDB = new UserDB();
+
         userDB.setId(UUID.randomUUID().toString());
         userDB.setFirstName(createUserModel.getFirstName());
         userDB.setLastName(createUserModel.getLastName());
         userDB.setAge(createUserModel.getAge());
         userDB.setEmail(createUserModel.getEmail());
         userDB.setPhoneNumber(createUserModel.getPhoneNumber());
-        return usersRepository.save(userDB);
+        usersRepository.save(userDB);
+
+            return new CreateUserModel(userDB.getId(),userDB.getFirstName(),userDB.getLastName(),userDB.getAge(),userDB.getEmail(),userDB.getPhoneNumber());
     }
     //update user
-    public UserDB updateUser(String id, UpdateUserModel updateUserModel) {
-        Optional<UserDB> user = usersRepository.findById(id);
-        if (user.isPresent()) {
+    public UpdateUserModel updateUser(String id, UpdateUserModel updateUserModel) {
+        if (usersRepository.findById(id).isPresent()) {
+        UserDB userDBtoUpdate = usersRepository.findById(id).get();
 
-            UserDB userToUpdate = user.get();
-            userToUpdate.setFirstName(updateUserModel.getFirstName());
-            userToUpdate.setLastName(updateUserModel.getLastName());
-            userToUpdate.setAge(updateUserModel.getAge());
-            userToUpdate.setEmail(updateUserModel.getEmail());
-            userToUpdate.setPhoneNumber(updateUserModel.getPhoneNumber());
-            return usersRepository.save(userToUpdate);
+        userDBtoUpdate.setFirstName(updateUserModel.getFirstName());
+        userDBtoUpdate.setLastName(updateUserModel.getLastName());
+        userDBtoUpdate.setAge(updateUserModel.getAge());
+        userDBtoUpdate.setEmail(updateUserModel.getEmail());
+        userDBtoUpdate.setPhoneNumber(updateUserModel.getPhoneNumber());
+        UserDB updatedUser = usersRepository.save(userDBtoUpdate);
+
+            return new UpdateUserModel(updatedUser.getId(),updatedUser.getFirstName(),updatedUser.getLastName(),updatedUser.getAge(),updatedUser.getEmail(),updatedUser.getPhoneNumber());
         } else {
             throw new UserNotFoundException();
-        }
+            }
     }
     //list of all users/filters
-    public List<UserDB> getAllUsers(String firstName,String lastName) {
-        List<UserDB> userList = new ArrayList<>();
+    public List<UserModel> getAllUsers(String firstName,String lastName) {
+        List<UserModel> userList = new ArrayList<>();
 
         if(firstName != null ||lastName != null ){
-            usersRepository.filterUsersByFirstNameAndLastName(firstName,lastName).forEach(userModel -> userList.add(new UserDB(userModel.getId(), userModel.getFirstName(), userModel.getLastName(), userModel.getAge(), userModel.getEmail(), userModel.getPhoneNumber())));
-        }else{
-            usersRepository.findAll().forEach(userModel -> userList.add(new UserDB(userModel.getId(), userModel.getFirstName(), userModel.getLastName(), userModel.getAge(), userModel.getEmail(), userModel.getPhoneNumber())));
+            usersRepository.filterUsersByFirstNameAndLastName(firstName,lastName).forEach(userDB -> userList.add(new UserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(), userDB.getEmail(), userDB.getPhoneNumber())));
+        } else{
+            usersRepository.findAll().forEach(userDB -> userList.add(new UserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(), userDB.getEmail(), userDB.getPhoneNumber())));
         }
-        return userList;
+            return userList;
     }
     //get user by id
-    public UserDB getUserById(String id){
+    public UserModel getUserById(String id){
         if(usersRepository.findById(id).isPresent()){
-          UserDB userById = usersRepository.findById(id).get();
-          return new UserDB(userById.getId(),userById.getFirstName(),userById.getLastName(),userById.getAge(),userById.getEmail(),userById.getPhoneNumber());
+            UserDB userById = usersRepository.findById(id).get();
+            return new UserModel(userById.getId(),userById.getFirstName(),userById.getLastName(),userById.getAge(),userById.getEmail(),userById.getPhoneNumber());
         } else {
             throw new UserNotFoundException();
         }

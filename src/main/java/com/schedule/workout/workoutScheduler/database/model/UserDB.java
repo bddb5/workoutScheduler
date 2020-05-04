@@ -36,7 +36,6 @@ public class UserDB {
     private String phoneNumber;
 
     public UserDB(){
-
     }
     public UserDB(String id,String firstName,String lastName,int age,String email,String phoneNumber){
         this.id = id;
