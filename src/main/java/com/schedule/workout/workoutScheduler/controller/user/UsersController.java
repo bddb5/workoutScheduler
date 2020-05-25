@@ -1,16 +1,12 @@
 package com.schedule.workout.workoutScheduler.controller.user;
 
-
-import com.schedule.workout.workoutScheduler.database.model.UserDB;
 import com.schedule.workout.workoutScheduler.exceptions.InvalidUserBodyException;
 import com.schedule.workout.workoutScheduler.exceptions.UserNotFoundException;
 import com.schedule.workout.workoutScheduler.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -26,24 +22,23 @@ public class UsersController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(usersService.createUser(createUserModel));
-        } catch (InvalidUserBodyException e){
+        } catch (InvalidUserBodyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .build();
         }
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/users/{id}")
-    public ResponseEntity<UpdateUserModel> updateUser(@PathVariable String id,@Valid @RequestBody UpdateUserModel updateUserModel) {
+    public ResponseEntity updateUser(@PathVariable String id, @Valid @RequestBody UpdateUserModel updateUserModel) {
         try {
-            usersService.updateUser(id,updateUserModel);
+            usersService.updateUser(id, updateUserModel);
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .build();
-
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .build();
-        } catch (InvalidUserBodyException e){
+        } catch (InvalidUserBodyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .build();
         }
@@ -63,15 +58,14 @@ public class UsersController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/users")
     public ResponseEntity<List<UserModel>> getAllUsers(@RequestParam(name = "firstName", required = false) String firstName,
-                                                    @RequestParam(name = "lastName", required = false) String lastName){
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(usersService.getAllUsers(firstName,lastName));
-
+                                                       @RequestParam(name = "lastName", required = false) String lastName) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(usersService.getAllUsers(firstName, lastName));
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")
-    public ResponseEntity<UserModel> deleteUser(@PathVariable String id) {
+    public ResponseEntity deleteUser(@PathVariable String id) {
         try {
             usersService.deleteUser(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)

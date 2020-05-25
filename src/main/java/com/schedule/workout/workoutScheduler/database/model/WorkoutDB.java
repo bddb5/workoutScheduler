@@ -3,24 +3,22 @@ package com.schedule.workout.workoutScheduler.database.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
 @Entity
-@Table(name="workouts")
+@Table(name = "workouts")
 public class WorkoutDB {
 
     @Id
     @Column(name = "workout_id")
     private String id;
-
     @NotEmpty
-    @Size(min=2, max=20)
+    @Size(min = 2, max = 20)
     @Column(name = "name")
     private String name;
     @NotEmpty
-    @Size(min=2, max=80)
+    @Size(min = 2, max = 80)
     @Column(name = "description")
     private String description;
     @NotNull
@@ -34,17 +32,15 @@ public class WorkoutDB {
     @Column(name = "difficulty")
     private Integer difficulty;
 
-
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     private UserDB user;
 
-
-    public WorkoutDB(){
-
+    public WorkoutDB() {
     }
-    public WorkoutDB(String id,String name,String description,Integer duration,Integer difficulty,UserDB user){
+
+    public WorkoutDB(String id, String name, String description, Integer duration, Integer difficulty, UserDB user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -96,13 +92,16 @@ public class WorkoutDB {
     public String getTrainerId() {
         return user.getId();
     }
-    public String getUserFullName(){
+
+    public String getUserFullName() {
         return user.getFirstName() + " " + user.getLastName();
     }
+
     @JsonIgnore
     public UserDB getUser() {
         return user;
     }
+
     @JsonIgnore
     public void setUser(UserDB user) {
         this.user = user;

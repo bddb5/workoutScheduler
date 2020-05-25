@@ -1,11 +1,6 @@
 package com.schedule.workout.workoutScheduler.controller.workout;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.schedule.workout.workoutScheduler.database.model.UserDB;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.*;
 
 public class WorkoutModel {
@@ -23,7 +18,6 @@ public class WorkoutModel {
     @Min(value = 1)
     @Max(value = 5)
     private Integer difficulty;
-
     private String trainerId;
     private String userFullName;
     private UserDB user;
@@ -31,7 +25,7 @@ public class WorkoutModel {
     public WorkoutModel() {
     }
 
-    public WorkoutModel(String id, String name, String description, Integer duration, Integer difficulty,String trainerId,UserDB user) {
+    public WorkoutModel(String id, String name, String description, Integer duration, Integer difficulty, String trainerId, UserDB user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -89,11 +83,12 @@ public class WorkoutModel {
         this.trainerId = trainerId;
     }
 
-    public String getUserFullName(){
+    public String getUserFullName() {
         return user.getFirstName() + " " + user.getLastName();
     }
+
     public void setUserFullName(String userFullName) {
         this.userFullName = userFullName;
     }
-    
+
 }

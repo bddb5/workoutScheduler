@@ -1,21 +1,14 @@
 package com.schedule.workout.workoutScheduler.controller.workout;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.schedule.workout.workoutScheduler.database.model.UserDB;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-import javax.persistence.*;
 import javax.validation.constraints.*;
 
 public class CreateWorkoutModel {
 
-
     @NotEmpty
-    @Size(min=2, max=20)
+    @Size(min = 2, max = 20)
     private String name;
     @NotEmpty
-    @Size(min=2, max=80)
+    @Size(min = 2, max = 80)
     private String description;
     @NotNull
     private Integer duration;
@@ -23,21 +16,18 @@ public class CreateWorkoutModel {
     @Min(value = 1)
     @Max(value = 5)
     private Integer difficulty;
-
     private String trainerId;
-
 
     public CreateWorkoutModel() {
     }
-    public CreateWorkoutModel(String name,String description,Integer duration,Integer difficulty,String trainerId){
+
+    public CreateWorkoutModel(String name, String description, Integer duration, Integer difficulty, String trainerId) {
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.difficulty = difficulty;
         this.trainerId = trainerId;
-
     }
-
 
     public String getName() {
         return name;
@@ -78,5 +68,4 @@ public class CreateWorkoutModel {
     public void setTrainerId(String trainerId) {
         this.trainerId = trainerId;
     }
-
 }
