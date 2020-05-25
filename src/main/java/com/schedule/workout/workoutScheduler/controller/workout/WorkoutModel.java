@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.*;
 
 public class WorkoutModel {
+
     private String id;
     @NotEmpty
     @Size(min = 2, max = 20)
@@ -23,20 +24,20 @@ public class WorkoutModel {
     @Max(value = 5)
     private Integer difficulty;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id")
+    private String trainerId;
+    private String userFullName;
     private UserDB user;
 
     public WorkoutModel() {
     }
 
-    public WorkoutModel(String id, String name, String description, Integer duration, Integer difficulty, UserDB user) {
+    public WorkoutModel(String id, String name, String description, Integer duration, Integer difficulty,String trainerId,UserDB user) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.difficulty = difficulty;
+        this.trainerId = trainerId;
         this.user = user;
     }
 
@@ -80,22 +81,19 @@ public class WorkoutModel {
         this.difficulty = difficulty;
     }
 
-    public String getTrainerId(){
-        return user.getId();
-    }
-    public String getTrainerFirstAndLastName(){
-        return user.getFirstName()+ " " + user.getLastName();
-    }
-    @JsonIgnore
-    public UserDB getUser() {
-        return user;
-    }
-    @JsonIgnore
-    public void setUser(UserDB user) {
-        this.user = user;
+    public String getTrainerId() {
+        return trainerId;
     }
 
+    public void setTrainerId(String trainerId) {
+        this.trainerId = trainerId;
+    }
 
-
-
+    public String getUserFullName(){
+        return user.getFirstName() + " " + user.getLastName();
+    }
+    public void setUserFullName(String userFullName) {
+        this.userFullName = userFullName;
+    }
+    
 }

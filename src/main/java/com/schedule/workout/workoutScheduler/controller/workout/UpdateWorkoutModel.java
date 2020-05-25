@@ -12,7 +12,7 @@ import javax.validation.constraints.*;
 
 public class UpdateWorkoutModel {
 
-    private String id;
+
     @NotEmpty
     @Size(min=2, max=20)
     private String name;
@@ -26,28 +26,21 @@ public class UpdateWorkoutModel {
     @Max(value = 5)
     private Integer difficulty;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id")
-    private UserDB user;
+    private String trainerId;
+
+
 
     public UpdateWorkoutModel() {
     }
-    public UpdateWorkoutModel(String id,String name,String description,Integer duration,Integer difficulty,UserDB user){
-        this.id = id;
+    public UpdateWorkoutModel(String name,String description,Integer duration,Integer difficulty,String trainerId){
+
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.difficulty = difficulty;
-        this.user = user;
-    }
+        this.trainerId = trainerId;
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -82,10 +75,12 @@ public class UpdateWorkoutModel {
         this.difficulty = difficulty;
     }
 
-    public UserDB getUser() {
-        return user;
+    public String getTrainerId() {
+        return trainerId;
     }
-    public void setUser(UserDB user) {
-        this.user = user;
+
+    public void setTrainerId(String trainerId) {
+        this.trainerId = trainerId;
     }
+
 }

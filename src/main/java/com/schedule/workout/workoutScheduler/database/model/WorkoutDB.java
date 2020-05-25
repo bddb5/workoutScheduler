@@ -34,10 +34,12 @@ public class WorkoutDB {
     @Column(name = "difficulty")
     private Integer difficulty;
 
+
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     private UserDB user;
+
 
     public WorkoutDB(){
 
@@ -91,13 +93,12 @@ public class WorkoutDB {
         this.difficulty = difficulty;
     }
 
-    public String getTrainerId(){
+    public String getTrainerId() {
         return user.getId();
     }
-    public String getTrainerFirstAndLastName(){
-        return user.getFirstName()+ " " + user.getLastName();
+    public String getUserFullName(){
+        return user.getFirstName() + " " + user.getLastName();
     }
-
     @JsonIgnore
     public UserDB getUser() {
         return user;
@@ -106,5 +107,4 @@ public class WorkoutDB {
     public void setUser(UserDB user) {
         this.user = user;
     }
-
 }

@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
 
 public class CreateWorkoutModel {
 
-    private String id;
+
     @NotEmpty
     @Size(min=2, max=20)
     private String name;
@@ -24,30 +24,20 @@ public class CreateWorkoutModel {
     @Max(value = 5)
     private Integer difficulty;
 
+    private String trainerId;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id")
-    private UserDB user;
 
     public CreateWorkoutModel() {
     }
-    public CreateWorkoutModel(String id,String name,String description,Integer duration,Integer difficulty,UserDB user){
-        this.id = id;
+    public CreateWorkoutModel(String name,String description,Integer duration,Integer difficulty,String trainerId){
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.difficulty = difficulty;
-        this.user = user;
+        this.trainerId = trainerId;
+
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -81,11 +71,12 @@ public class CreateWorkoutModel {
         this.difficulty = difficulty;
     }
 
-    public UserDB getUser() {
-        return user;
+    public String getTrainerId() {
+        return trainerId;
     }
 
-    public void setUser(UserDB user) {
-        this.user = user;
+    public void setTrainerId(String trainerId) {
+        this.trainerId = trainerId;
     }
+
 }

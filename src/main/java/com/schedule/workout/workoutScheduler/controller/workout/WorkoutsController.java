@@ -40,14 +40,14 @@ public class WorkoutsController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/workouts")
     public ResponseEntity<List<WorkoutModel>> getAllWorkouts(@RequestParam(name = "name",required = false)String name,
-                                                             @RequestParam(name = "description",required = false)String description,
                                                              @RequestParam(name = "duration",required = false) Integer duration,
-                                                             @RequestParam(name = "difficulty",required = false)Integer difficulty
+                                                             @RequestParam(name = "difficulty",required = false)Integer difficulty,
+                                                             @RequestParam(name = "userId",required = false)String userId
                                                             ){
         try {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(workoutsService.getAllWorkouts(name, description, duration, difficulty));
+                    .body(workoutsService.getAllWorkouts(name, duration, difficulty,userId));
         }catch (WorkoutNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .build();
@@ -67,7 +67,7 @@ public class WorkoutsController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/workouts/{id}")
-    public ResponseEntity<UpdateWorkoutModel> updateWorkout(@PathVariable String id, @Valid @RequestBody UpdateWorkoutModel updateWorkoutModel) {
+    public ResponseEntity updateWorkout(@PathVariable String id, @Valid @RequestBody UpdateWorkoutModel updateWorkoutModel) {
         try {
             workoutsService.updateWorkout(id,updateWorkoutModel);
             return ResponseEntity
@@ -84,7 +84,7 @@ public class WorkoutsController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/workouts/{id}")
-    public ResponseEntity<WorkoutModel> deleteWorkout(@PathVariable String id) {
+    public ResponseEntity deleteWorkout(@PathVariable String id) {
         try {
             workoutsService.deleteWorkout(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)

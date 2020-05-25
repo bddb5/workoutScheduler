@@ -7,23 +7,15 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Repository
 public interface IWorkoutsRepository extends CrudRepository<WorkoutDB,String> {
     List<WorkoutDB> findAll();
 
-    @Query("from WorkoutDB where name = ?1")
-    List<WorkoutDB> findWorkoutsByName(String name);
+    @Query("from WorkoutDB wdb where wdb.name = :name or wdb.duration = :duration or wdb.difficulty = :difficulty or wdb.user.id = :userId or wdb.name = :name and wdb.duration = :duration and wdb.user.id = :userId")
+    List<WorkoutDB> filterWorkouts(String name, Integer duration, Integer difficulty, String userId);
 
-    @Query("from WorkoutDB where description = ?1")
-    List<WorkoutDB> findWorkoutsByDescription(String description);
-
-    @Query("from WorkoutDB where duration = ?1")
-    List<WorkoutDB> findWorkoutsByDuration(Integer duration);
-
-    @Query("from WorkoutDB where difficulty = ?1")
-    List<WorkoutDB> findWorkoutsByDifficulty(Integer difficulty);
 
 }
