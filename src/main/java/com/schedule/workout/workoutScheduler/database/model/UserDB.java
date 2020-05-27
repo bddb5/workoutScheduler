@@ -6,19 +6,18 @@ import javax.persistence.Table;
 import javax.validation.constraints.*;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class UserDB {
 
     @Id
     @Column(name = "user_id")
     private String id;
-
     @NotEmpty
-    @Size(min=2, max=10)
+    @Size(min = 2, max = 10)
     @Column(name = "first_name")
     private String firstName;
     @NotEmpty
-    @Size(min=2, max=10)
+    @Size(min = 2, max = 10)
     @Column(name = "last_name")
     private String lastName;
     @NotNull
@@ -28,16 +27,17 @@ public class UserDB {
     private int age;
     @NotEmpty
     @Email
-    @Column (name = "email")
+    @Column(name = "email")
     private String email;
     @NotEmpty
-    @Column (name = "phone_number" )
-    @Size(min=6, max=10)
+    @Column(name = "phone_number")
+    @Size(min = 6, max = 10)
     private String phoneNumber;
 
-    public UserDB(){
+    public UserDB() {
     }
-    public UserDB(String id,String firstName,String lastName,int age,String email,String phoneNumber){
+
+    public UserDB(String id, String firstName, String lastName, int age, String email, String phoneNumber) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

@@ -1,17 +1,15 @@
 package com.schedule.workout.workoutScheduler.controller.user;
 
-import javax.persistence.Id;
 import javax.validation.constraints.*;
 
 public class CreateUserModel {
 
-
     private String id;
     @NotEmpty
-    @Size(min=2, max=10)
+    @Size(min = 2, max = 10)
     private String firstName;
     @NotEmpty
-    @Size(min=2, max=10)
+    @Size(min = 2, max = 10)
     private String lastName;
     @NotNull
     @Min(value = 20)
@@ -21,13 +19,13 @@ public class CreateUserModel {
     @Email
     private String email;
     @NotEmpty
-    @Size(min=6, max=10)
+    @Size(min = 6, max = 10)
     private String phoneNumber;
 
-
-    public CreateUserModel(){
+    public CreateUserModel() {
     }
-    public CreateUserModel(String id,String firstName,String lastName,int age,String email,String phoneNumber){
+
+    public CreateUserModel(String id, String firstName, String lastName, int age, String email, String phoneNumber) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
