@@ -7,17 +7,12 @@ import com.schedule.workout.workoutScheduler.database.IWorkoutSchedulesRepositor
 import com.schedule.workout.workoutScheduler.database.IWorkoutsRepository;
 import com.schedule.workout.workoutScheduler.database.model.WorkoutDB;
 import com.schedule.workout.workoutScheduler.database.model.WorkoutScheduleDB;
-import com.schedule.workout.workoutScheduler.exceptions.InvalidWorkoutBodyException;
 import com.schedule.workout.workoutScheduler.exceptions.InvalidWorkoutScheduleBodyException;
 import com.schedule.workout.workoutScheduler.exceptions.WorkoutScheduleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import java.util.*;
 
 @Service
 public class WorkoutSchedulesService {
@@ -28,69 +23,99 @@ public class WorkoutSchedulesService {
 
     //create schedule
     public CreateWorkoutScheduleModel createSchedule(CreateWorkoutScheduleModel createWorkoutScheduleModel) {
+        List<WorkoutScheduleDB> schedulesByDay = workoutSchedulesRepository.findByDay(createWorkoutScheduleModel.getDay());
         WorkoutScheduleDB workoutScheduleDB = new WorkoutScheduleDB();
         WorkoutDB workoutDB = workoutsRepository.findById(createWorkoutScheduleModel.getWorkoutID()).orElse(null);
+
+        long newWorkoutStartTimeMillis = createWorkoutScheduleModel.getStartWorkout().getTime();
+        long newWorkoutEndTimeMillis = newWorkoutStartTimeMillis + (workoutDB.getDuration() * 60 * 1000);
+
+        schedulesByDay.forEach(schedule -> {
+            long startWorkoutMillis = schedule.getStartWorkout().getTime();
+            long endWorkoutMillis = startWorkoutMillis + (schedule.getWorkoutDB().getDuration() * 60 * 1000);
+            if ((newWorkoutStartTimeMillis >= startWorkoutMillis && newWorkoutStartTimeMillis < endWorkoutMillis) ||
+                    (newWorkoutEndTimeMillis > startWorkoutMillis && newWorkoutEndTimeMillis <= endWorkoutMillis) ||
+                    (newWorkoutStartTimeMillis < startWorkoutMillis && newWorkoutEndTimeMillis > endWorkoutMillis)) {
+                throw new InvalidWorkoutScheduleBodyException();
+            }
+        });
         workoutScheduleDB.setId(UUID.randomUUID().toString());
         workoutScheduleDB.setDay(createWorkoutScheduleModel.getDay());
         workoutScheduleDB.setStartWorkout(createWorkoutScheduleModel.getStartWorkout());
-        workoutScheduleDB.setEndWorkout(createWorkoutScheduleModel.getEndWorkout());
-        //missing day validation first,but not the point doesn't work anyway
-        if (workoutScheduleDB.getStartWorkout().before(createWorkoutScheduleModel.getEndWorkout()) &&
-                workoutScheduleDB.getEndWorkout().after(createWorkoutScheduleModel.getStartWorkout())) {
-            throw new InvalidWorkoutScheduleBodyException();
-        }
-            workoutScheduleDB.setWorkoutDB(workoutDB);
-            workoutSchedulesRepository.save(workoutScheduleDB);
-            return new CreateWorkoutScheduleModel(workoutScheduleDB.getDay(), workoutScheduleDB.getStartWorkout(),
-                    workoutScheduleDB.getEndWorkout(), workoutScheduleDB.getWorkoutId());
+        workoutScheduleDB.setWorkoutDB(workoutDB);
+        workoutSchedulesRepository.save(workoutScheduleDB);
 
+        return new CreateWorkoutScheduleModel(workoutScheduleDB.getDay(), workoutScheduleDB.getStartWorkout(),
+                workoutScheduleDB.getWorkoutId());
     }
+
     //update schedule
-    public UpdateWorkoutScheduleModel updateSchedule(String id,UpdateWorkoutScheduleModel updateWorkoutScheduleModel){
+    public UpdateWorkoutScheduleModel updateSchedule(String id, UpdateWorkoutScheduleModel updateWorkoutScheduleModel) {
+        List<WorkoutScheduleDB> schedulesByDay = workoutSchedulesRepository.findByDay(updateWorkoutScheduleModel.getDay());
         WorkoutDB workoutDB = workoutsRepository.findById(updateWorkoutScheduleModel.getWorkoutID()).orElse(null);
-        if(workoutSchedulesRepository.existsById(id)){
+
+        if (workoutSchedulesRepository.existsById(id)) {
             WorkoutScheduleDB workoutScheduleDBToUpdate = workoutSchedulesRepository.findById(id).get();
             workoutScheduleDBToUpdate.setDay(updateWorkoutScheduleModel.getDay());
             workoutScheduleDBToUpdate.setStartWorkout(updateWorkoutScheduleModel.getStartWorkout());
-            workoutScheduleDBToUpdate.setEndWorkout(updateWorkoutScheduleModel.getEndWorkout());
             workoutScheduleDBToUpdate.setWorkoutDB(workoutDB);
             WorkoutScheduleDB updatedWorkoutSchedule = workoutSchedulesRepository.save(workoutScheduleDBToUpdate);
-            return new UpdateWorkoutScheduleModel(updatedWorkoutSchedule.getDay(),updatedWorkoutSchedule.getStartWorkout(),
-                    updatedWorkoutSchedule.getEndWorkout(),updatedWorkoutSchedule.getWorkoutId());
-        }
-        else {
+
+            long newWorkoutStartTimeMillis = updateWorkoutScheduleModel.getStartWorkout().getTime();
+            long newWorkoutEndTimeMillis = newWorkoutStartTimeMillis + (workoutDB.getDuration() * 60 * 1000);
+//
+            schedulesByDay.forEach(schedule -> {
+                long startWorkoutMillis = schedule.getStartWorkout().getTime();
+                long endWorkoutMillis = startWorkoutMillis + (schedule.getWorkoutDB().getDuration() * 60 * 1000);
+
+
+                if ((newWorkoutStartTimeMillis >= startWorkoutMillis && newWorkoutStartTimeMillis < endWorkoutMillis) ||
+                        (newWorkoutEndTimeMillis > startWorkoutMillis && newWorkoutEndTimeMillis <= endWorkoutMillis) ||
+                        (newWorkoutStartTimeMillis < startWorkoutMillis && newWorkoutEndTimeMillis > endWorkoutMillis)) {
+                    throw new InvalidWorkoutScheduleBodyException();
+                }
+            });
+            return new UpdateWorkoutScheduleModel(updatedWorkoutSchedule.getDay(),
+                    updatedWorkoutSchedule.getStartWorkout(), updatedWorkoutSchedule.getWorkoutId());
+        } else {
             throw new WorkoutScheduleNotFoundException();
         }
     }
+
     // get schedule by id
-    public WorkoutScheduleModel getScheduleById(String id){
-        if(workoutSchedulesRepository.existsById(id)){
+    public WorkoutScheduleModel getScheduleById(String id) {
+        if (workoutSchedulesRepository.existsById(id)) {
             WorkoutScheduleDB workoutScheduleById = workoutSchedulesRepository.findById(id).get();
-            return new WorkoutScheduleModel(workoutScheduleById.getId(),workoutScheduleById.getDay(),workoutScheduleById.getStartWorkout(),
-                    workoutScheduleById.getEndWorkout(),workoutScheduleById.getWorkoutId());
-        }else{
+            return new WorkoutScheduleModel(workoutScheduleById.getId(), workoutScheduleById.getDay(),
+                    workoutScheduleById.getStartWorkout(), workoutScheduleById.getWorkoutId(),
+                    workoutScheduleById.getWorkoutDB());
+        } else {
             throw new WorkoutScheduleNotFoundException();
         }
     }
+
     //get all schedules
-    public List<WorkoutScheduleModel> getAllSchedules(String day,String workoutId){
-        List<WorkoutScheduleModel>  scheduleList = new ArrayList<>();
-        if(day != null || workoutId != null){
-            workoutSchedulesRepository.filterSchedules(day,workoutId).forEach(workoutScheduleDB -> scheduleList.add
-                    (new WorkoutScheduleModel(workoutScheduleDB.getId(), workoutScheduleDB.getDay(), workoutScheduleDB.getStartWorkout(),
-                            workoutScheduleDB.getEndWorkout(), workoutScheduleDB.getWorkoutId())));
-        }else {
+    public List<WorkoutScheduleModel> getAllSchedules(Integer day, String workoutId) {
+        List<WorkoutScheduleModel> scheduleList = new ArrayList<>();
+        if (day != null || workoutId != null) {
+            workoutSchedulesRepository.filterSchedules(day, workoutId).forEach(workoutScheduleDB -> scheduleList.add
+                    (new WorkoutScheduleModel(workoutScheduleDB.getId(), workoutScheduleDB.getDay(),
+                            workoutScheduleDB.getStartWorkout(), workoutScheduleDB.getWorkoutId(),
+                            workoutScheduleDB.getWorkoutDB())));
+        } else {
             workoutSchedulesRepository.findAll().forEach(workoutScheduleDB -> scheduleList.add
-                    (new WorkoutScheduleModel(workoutScheduleDB.getId(), workoutScheduleDB.getDay(), workoutScheduleDB.getStartWorkout(),
-                            workoutScheduleDB.getEndWorkout(), workoutScheduleDB.getWorkoutId())));
+                    (new WorkoutScheduleModel(workoutScheduleDB.getId(), workoutScheduleDB.getDay(),
+                            workoutScheduleDB.getStartWorkout()
+                            , workoutScheduleDB.getWorkoutId(), workoutScheduleDB.getWorkoutDB())));
         }
         return scheduleList;
     }
+
     //delete schedule
-    public void deleteSchedule(String id){
-        if(workoutSchedulesRepository.existsById(id)){
+    public void deleteSchedule(String id) {
+        if (workoutSchedulesRepository.existsById(id)) {
             workoutSchedulesRepository.deleteById(id);
-        }else{
+        } else {
             throw new WorkoutScheduleNotFoundException();
         }
     }

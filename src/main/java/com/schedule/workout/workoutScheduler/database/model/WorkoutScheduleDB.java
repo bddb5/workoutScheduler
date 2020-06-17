@@ -7,6 +7,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -22,19 +25,12 @@ public class WorkoutScheduleDB {
     private String id;
     @Column(name = "day")
     @NotNull
-    private String day;
+    @Min(value = 1)
+    @Max(value = 7)
+    private Integer day;
     @Column(name = "start_workout")
-    @Temporal(TemporalType.TIME)
-    //@DateTimeFormat(style = "HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm")
     @NotNull
-    private Date startWorkout;
-    @Column(name = "end_workout")
-    @Temporal(TemporalType.TIME)
-    //@DateTimeFormat(style = "HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm")
-    @NotNull
-    private Date endWorkout;
+    private Time startWorkout;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -44,11 +40,10 @@ public class WorkoutScheduleDB {
     public WorkoutScheduleDB (){
 
     }
-    public WorkoutScheduleDB(String id,String day,Date startWorkout,Date endWorkout,WorkoutDB workoutDB){
+    public WorkoutScheduleDB(String id,Integer day,Time startWorkout,WorkoutDB workoutDB){
         this.id = id;
         this.day = day;
         this.startWorkout = startWorkout;
-        this.endWorkout = endWorkout;
         this.workoutDB = workoutDB;
     }
 
@@ -60,32 +55,30 @@ public class WorkoutScheduleDB {
         this.id = id;
     }
 
-    public String getDay() {
+    public Integer getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(Integer day) {
         this.day = day;
     }
 
-    public Date getStartWorkout() {
+    public Time getStartWorkout() {
         return startWorkout;
     }
 
-    public void setStartWorkout(Date startWorkout) {
+    public void setStartWorkout(Time startWorkout) {
         this.startWorkout = startWorkout;
     }
 
-    public Date getEndWorkout() {
-        return endWorkout;
-    }
-
-    public void setEndWorkout(Date endWorkout) {
-        this.endWorkout = endWorkout;
-    }
     public String getWorkoutId() {
         return workoutDB.getId();
     }
+
+    public Integer getWorkoutDuration(){
+        return workoutDB.getDuration();
+    }
+
     @JsonIgnore
     public WorkoutDB getWorkoutDB() {
         return workoutDB;

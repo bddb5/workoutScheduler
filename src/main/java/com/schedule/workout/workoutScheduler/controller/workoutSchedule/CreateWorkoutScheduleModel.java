@@ -1,66 +1,56 @@
 package com.schedule.workout.workoutScheduler.controller.workoutSchedule;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.schedule.workout.workoutScheduler.database.model.WorkoutDB;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
 
 public class CreateWorkoutScheduleModel {
 
 
     @NotNull
-    private String day;
-    @Temporal(TemporalType.TIME)
-    //@DateTimeFormat(style = "HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "HH:mm")
+    @Min(value = 1)
+    @Max(value = 7)
+    private Integer day;
     @NotNull
-    private Date startWorkout;
-    @Temporal(TemporalType.TIME)
-    //@DateTimeFormat(style = "HH:mm")
-    @JsonFormat(shape = JsonFormat.Shape.STRING , pattern = "HH:mm")
-    @NotNull
-    private Date endWorkout;
+    private Time startWorkout;
     @NotEmpty
     private String workoutID;
 
-    public CreateWorkoutScheduleModel(){
+    public CreateWorkoutScheduleModel() {
 
     }
-    public CreateWorkoutScheduleModel(String day,Date startWorkout,Date endWorkout,String workoutID){
+
+    public CreateWorkoutScheduleModel(Integer day, Time startWorkout, String workoutID) {
         this.day = day;
         this.startWorkout = startWorkout;
-        this.endWorkout = endWorkout;
         this.workoutID = workoutID;
     }
 
-    public String getDay() {
+    public Integer getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(Integer day) {
         this.day = day;
     }
 
-    public Date getStartWorkout() {
+    public Time getStartWorkout() {
         return startWorkout;
     }
 
-    public void setStartWorkout(Date startWorkout) {
+    public void setStartWorkout(Time startWorkout) {
         this.startWorkout = startWorkout;
-    }
-
-    public Date getEndWorkout() {
-        return endWorkout;
-    }
-
-    public void setEndWorkout(Date endWorkout) {
-        this.endWorkout = endWorkout;
     }
 
     public String getWorkoutID() {
@@ -70,4 +60,6 @@ public class CreateWorkoutScheduleModel {
     public void setWorkoutID(String workoutID) {
         this.workoutID = workoutID;
     }
+
+
 }

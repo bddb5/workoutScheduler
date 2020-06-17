@@ -30,7 +30,8 @@ public class UsersService {
         userDB.setPhoneNumber(createUserModel.getPhoneNumber());
         usersRepository.save(userDB);
 
-        return new CreateUserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(), userDB.getEmail(), userDB.getPhoneNumber());
+        return new CreateUserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(),
+                userDB.getEmail(), userDB.getPhoneNumber());
     }
 
     //update user
@@ -45,7 +46,8 @@ public class UsersService {
             userDBtoUpdate.setPhoneNumber(updateUserModel.getPhoneNumber());
             UserDB updatedUser = usersRepository.save(userDBtoUpdate);
 
-            return new UpdateUserModel(updatedUser.getId(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getAge(), updatedUser.getEmail(), updatedUser.getPhoneNumber());
+            return new UpdateUserModel(updatedUser.getId(), updatedUser.getFirstName(), updatedUser.getLastName(),
+                    updatedUser.getAge(), updatedUser.getEmail(), updatedUser.getPhoneNumber());
         } else {
             throw new UserNotFoundException();
         }
@@ -56,9 +58,12 @@ public class UsersService {
         List<UserModel> userList = new ArrayList<>();
 
         if (firstName != null || lastName != null) {
-            usersRepository.filterUsersByFirstNameAndLastName(firstName, lastName).forEach(userDB -> userList.add(new UserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(), userDB.getEmail(), userDB.getPhoneNumber())));
+            usersRepository.filterUsersByFirstNameAndLastName(firstName, lastName).forEach(userDB -> userList.add
+                    (new UserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(),
+                            userDB.getEmail(), userDB.getPhoneNumber())));
         } else {
-            usersRepository.findAll().forEach(userDB -> userList.add(new UserModel(userDB.getId(), userDB.getFirstName(), userDB.getLastName(), userDB.getAge(), userDB.getEmail(), userDB.getPhoneNumber())));
+            usersRepository.findAll().forEach(userDB -> userList.add(new UserModel(userDB.getId(), userDB.getFirstName(),
+                    userDB.getLastName(), userDB.getAge(), userDB.getEmail(), userDB.getPhoneNumber())));
         }
         return userList;
     }
@@ -67,7 +72,8 @@ public class UsersService {
     public UserModel getUserById(String id) {
         if (usersRepository.existsById(id)) {
             UserDB userById = usersRepository.findById(id).get();
-            return new UserModel(userById.getId(), userById.getFirstName(), userById.getLastName(), userById.getAge(), userById.getEmail(), userById.getPhoneNumber());
+            return new UserModel(userById.getId(), userById.getFirstName(), userById.getLastName(), userById.getAge(),
+                    userById.getEmail(), userById.getPhoneNumber());
         } else {
             throw new UserNotFoundException();
         }
