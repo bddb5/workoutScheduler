@@ -1,7 +1,7 @@
 package com.schedule.workout.workoutScheduler.controller.workoutSchedule;
 
-
 import com.schedule.workout.workoutScheduler.exceptions.InvalidWorkoutScheduleBodyException;
+import com.schedule.workout.workoutScheduler.exceptions.WorkoutNotFoundException;
 import com.schedule.workout.workoutScheduler.exceptions.WorkoutScheduleNotFoundException;
 import com.schedule.workout.workoutScheduler.services.WorkoutSchedulesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,9 @@ public class WorkoutSchedulesController {
         } catch (InvalidWorkoutScheduleBodyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .build();
+        } catch (WorkoutNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .build();
         }
     }
 
@@ -37,12 +40,11 @@ public class WorkoutSchedulesController {
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .build();
-
-        } catch (WorkoutScheduleNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .build();
         } catch (InvalidWorkoutScheduleBodyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .build();
+        }catch (WorkoutScheduleNotFoundException  | WorkoutNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .build();
         }
     }

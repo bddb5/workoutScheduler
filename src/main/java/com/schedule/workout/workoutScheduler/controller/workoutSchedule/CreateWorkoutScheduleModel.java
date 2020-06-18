@@ -1,22 +1,12 @@
 package com.schedule.workout.workoutScheduler.controller.workoutSchedule;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.schedule.workout.workoutScheduler.database.model.WorkoutDB;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Time;
-import java.util.Calendar;
-import java.util.Date;
 
 public class CreateWorkoutScheduleModel {
-
 
     @NotNull
     @Min(value = 1)
@@ -60,6 +50,5 @@ public class CreateWorkoutScheduleModel {
     public void setWorkoutID(String workoutID) {
         this.workoutID = workoutID;
     }
-
 
 }

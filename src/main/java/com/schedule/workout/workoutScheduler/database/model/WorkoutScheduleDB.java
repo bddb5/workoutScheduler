@@ -75,10 +75,6 @@ public class WorkoutScheduleDB {
         return workoutDB.getId();
     }
 
-    public Integer getWorkoutDuration(){
-        return workoutDB.getDuration();
-    }
-
     @JsonIgnore
     public WorkoutDB getWorkoutDB() {
         return workoutDB;
