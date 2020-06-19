@@ -43,7 +43,8 @@ public class WorkoutsService {
             workoutDB.setDifficulty(createWorkoutModel.getDifficulty());
             workoutDB.setUser(user);
             workoutsRepository.save(workoutDB);
-            return new CreateWorkoutModel(workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(), workoutDB.getDifficulty(), workoutDB.getTrainerId());
+            return new CreateWorkoutModel(workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(),
+                    workoutDB.getDifficulty(), workoutDB.getTrainerId());
         } else {
             throw new UserNotFoundException();
         }
@@ -54,9 +55,13 @@ public class WorkoutsService {
         List<WorkoutModel> workoutList = new ArrayList<>();
 
         if (name != null || duration != null || difficulty != null || userId != null) {
-            workoutsRepository.filterWorkouts(name, duration, difficulty, userId).forEach(workoutDB -> workoutList.add(new WorkoutModel(workoutDB.getId(), workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(), workoutDB.getDifficulty(), workoutDB.getTrainerId(), workoutDB.getUser())));
+            workoutsRepository.filterWorkouts(name, duration, difficulty, userId).forEach(workoutDB ->
+                    workoutList.add(new WorkoutModel(workoutDB.getId(), workoutDB.getName(), workoutDB.getDescription(),
+                            workoutDB.getDuration(), workoutDB.getDifficulty(), workoutDB.getTrainerId(), workoutDB.getUser())));
         } else {
-            workoutsRepository.findAll().forEach(workoutDB -> workoutList.add(new WorkoutModel(workoutDB.getId(), workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(), workoutDB.getDifficulty(), workoutDB.getTrainerId(), workoutDB.getUser())));
+            workoutsRepository.findAll().forEach(workoutDB -> workoutList.add(new WorkoutModel(workoutDB.getId(),
+                    workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(), workoutDB.getDifficulty(),
+                    workoutDB.getTrainerId(), workoutDB.getUser())));
         }
         return workoutList;
     }
@@ -65,7 +70,8 @@ public class WorkoutsService {
     public WorkoutModel getWorkoutById(String id) {
         if (workoutsRepository.existsById(id)) {
             WorkoutDB workoutById = workoutsRepository.findById(id).get();
-            return new WorkoutModel(workoutById.getId(), workoutById.getName(), workoutById.getDescription(), workoutById.getDuration(), workoutById.getDifficulty(), workoutById.getTrainerId(), workoutById.getUser());
+            return new WorkoutModel(workoutById.getId(), workoutById.getName(), workoutById.getDescription(),
+                    workoutById.getDuration(), workoutById.getDifficulty(), workoutById.getTrainerId(),workoutById.getUser());
         } else {
             throw new WorkoutNotFoundException();
         }
@@ -87,7 +93,8 @@ public class WorkoutsService {
             workoutDBtoUpdate.setDifficulty(updateWorkoutModel.getDifficulty());
             workoutDBtoUpdate.setUser(userDB);
             WorkoutDB updatedWorkout = workoutsRepository.save(workoutDBtoUpdate);
-            return new UpdateWorkoutModel(updatedWorkout.getName(), updatedWorkout.getDescription(), updatedWorkout.getDuration(), updatedWorkout.getDifficulty(), updatedWorkout.getTrainerId());
+            return new UpdateWorkoutModel(updatedWorkout.getName(), updatedWorkout.getDescription(),
+                    updatedWorkout.getDuration(), updatedWorkout.getDifficulty(), updatedWorkout.getTrainerId());
         } else {
             throw new WorkoutNotFoundException();
         }

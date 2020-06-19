@@ -10,7 +10,8 @@ import java.util.List;
 public interface IWorkoutsRepository extends CrudRepository<WorkoutDB, String> {
     List<WorkoutDB> findAll();
 
-    @Query("from WorkoutDB wdb where wdb.name = :name or wdb.duration = :duration or wdb.difficulty = :difficulty or wdb.user.id = :userId")
+    @Query("from WorkoutDB wdb where wdb.name = :name or wdb.duration = :duration or" +
+            " wdb.difficulty = :difficulty or wdb.user.id = :userId")
     List<WorkoutDB> filterWorkouts(String name, Integer duration, Integer difficulty, String userId);
 
 }
