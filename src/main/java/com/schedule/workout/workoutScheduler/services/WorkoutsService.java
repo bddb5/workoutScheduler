@@ -3,13 +3,14 @@ package com.schedule.workout.workoutScheduler.services;
 import com.schedule.workout.workoutScheduler.controller.workout.CreateWorkoutModel;
 import com.schedule.workout.workoutScheduler.controller.workout.UpdateWorkoutModel;
 import com.schedule.workout.workoutScheduler.controller.workout.WorkoutModel;
+import com.schedule.workout.workoutScheduler.database.IRolesRepository;
+import com.schedule.workout.workoutScheduler.database.IUserRoleRepository;
 import com.schedule.workout.workoutScheduler.database.IUsersRepository;
 import com.schedule.workout.workoutScheduler.database.IWorkoutsRepository;
 import com.schedule.workout.workoutScheduler.database.model.UserDB;
+import com.schedule.workout.workoutScheduler.database.model.UserRoleDB;
 import com.schedule.workout.workoutScheduler.database.model.WorkoutDB;
-import com.schedule.workout.workoutScheduler.exceptions.InvalidWorkoutBodyException;
-import com.schedule.workout.workoutScheduler.exceptions.UserNotFoundException;
-import com.schedule.workout.workoutScheduler.exceptions.WorkoutNotFoundException;
+import com.schedule.workout.workoutScheduler.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -22,19 +23,30 @@ public class WorkoutsService {
     private IWorkoutsRepository workoutsRepository;
     @Autowired
     private IUsersRepository usersRepository;
+    @Autowired
+    IUserRoleRepository userRoleRepository;
+    @Autowired
+    IRolesRepository rolesRepository;
 
     //duration
     List<Integer> durationOfWorkout = asList(20, 30, 45, 60);
 
     //create  workout
     public CreateWorkoutModel createWorkout(CreateWorkoutModel createWorkoutModel) {
+    List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(createWorkoutModel.getTrainerId());
+        userRoles.forEach(userRole -> {
+            String trainer = "Trainer";
+            if (!trainer.equals(userRole.getRoleDB().getName())) {
+                throw new AccessForbiddenException();
+            }
+        });
+
         WorkoutDB workoutDB = new WorkoutDB();
         UserDB user = usersRepository.findById(createWorkoutModel.getTrainerId()).orElse(null);
         if (user != null) {
             workoutDB.setId(UUID.randomUUID().toString());
             workoutDB.setName(createWorkoutModel.getName());
             workoutDB.setDescription(createWorkoutModel.getDescription());
-
             if (durationOfWorkout.contains(createWorkoutModel.getDuration())) {
                 workoutDB.setDuration(createWorkoutModel.getDuration());
             } else {
@@ -79,6 +91,13 @@ public class WorkoutsService {
 
     //update workout
     public UpdateWorkoutModel updateWorkout(String id, UpdateWorkoutModel updateWorkoutModel) {
+        List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(updateWorkoutModel.getTrainerId());
+        userRoles.forEach(userRole -> {
+            String trainer = "Trainer";
+            if (!trainer.equals(userRole.getRoleDB().getName())) {
+                throw new AccessForbiddenException();
+            }
+        });
         UserDB userDB = usersRepository.findById(updateWorkoutModel.getTrainerId()).orElse(null);
         if (workoutsRepository.existsById(id)) {
             WorkoutDB workoutDBtoUpdate = workoutsRepository.findById(id).get();

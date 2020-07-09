@@ -1,5 +1,7 @@
 package com.schedule.workout.workoutScheduler.controller.workout;
 
+import com.schedule.workout.workoutScheduler.database.model.RoleDB;
+
 import javax.validation.constraints.*;
 
 public class CreateWorkoutModel {
@@ -17,6 +19,8 @@ public class CreateWorkoutModel {
     @Max(value = 5)
     private Integer difficulty;
     private String trainerId;
+
+
 
     public CreateWorkoutModel() {
     }
@@ -68,4 +72,7 @@ public class CreateWorkoutModel {
     public void setTrainerId(String trainerId) {
         this.trainerId = trainerId;
     }
+
+
+
 }

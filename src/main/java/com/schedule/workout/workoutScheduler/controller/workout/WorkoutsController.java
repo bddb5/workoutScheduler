@@ -1,5 +1,6 @@
 package com.schedule.workout.workoutScheduler.controller.workout;
 
+import com.schedule.workout.workoutScheduler.exceptions.AccessForbiddenException;
 import com.schedule.workout.workoutScheduler.exceptions.InvalidWorkoutBodyException;
 import com.schedule.workout.workoutScheduler.exceptions.UserNotFoundException;
 import com.schedule.workout.workoutScheduler.exceptions.WorkoutNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -29,6 +31,9 @@ public class WorkoutsController {
                     .build();
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (AccessForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .build();
         }
     }
