@@ -61,10 +61,10 @@ public class RoleController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/roles")
-    public ResponseEntity<List<RoleModel>> getAllRoles(@RequestParam(name = "name", required = false) String name) {
+    public ResponseEntity<List<RoleModel>> getAllRoles() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(rolesService.getAllRoles(name));
+                .body(rolesService.getAllRoles());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/roles/{id}")

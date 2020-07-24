@@ -13,7 +13,9 @@ import com.schedule.workout.workoutScheduler.database.model.WorkoutDB;
 import com.schedule.workout.workoutScheduler.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
+
 import static java.util.Arrays.asList;
 
 @Service
@@ -33,33 +35,28 @@ public class WorkoutsService {
 
     //create  workout
     public CreateWorkoutModel createWorkout(CreateWorkoutModel createWorkoutModel) {
-    List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(createWorkoutModel.getTrainerId());
-        userRoles.forEach(userRole -> {
-            String trainer = "Trainer";
-            if (!trainer.equals(userRole.getRoleDB().getName())) {
-                throw new AccessForbiddenException();
-            }
-        });
-
-        WorkoutDB workoutDB = new WorkoutDB();
-        UserDB user = usersRepository.findById(createWorkoutModel.getTrainerId()).orElse(null);
-        if (user != null) {
-            workoutDB.setId(UUID.randomUUID().toString());
-            workoutDB.setName(createWorkoutModel.getName());
-            workoutDB.setDescription(createWorkoutModel.getDescription());
-            if (durationOfWorkout.contains(createWorkoutModel.getDuration())) {
-                workoutDB.setDuration(createWorkoutModel.getDuration());
-            } else {
-                throw new InvalidWorkoutBodyException();
-            }
-            workoutDB.setDifficulty(createWorkoutModel.getDifficulty());
-            workoutDB.setUser(user);
-            workoutsRepository.save(workoutDB);
-            return new CreateWorkoutModel(workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(),
-                    workoutDB.getDifficulty(), workoutDB.getTrainerId());
-        } else {
-            throw new UserNotFoundException();
+        List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(createWorkoutModel.getTrainerId());
+        String targetRole = "Trainer";
+        boolean ifUserHasPermission = userRoles.stream().anyMatch(userRoleDB -> targetRole.equals(userRoleDB.getRoleDB().getName()));
+        if (!ifUserHasPermission) {
+            throw new AccessForbiddenException();
         }
+        WorkoutDB workoutDB = new WorkoutDB();
+        UserDB user = usersRepository.findById(createWorkoutModel.getTrainerId()).orElseThrow(UserNotFoundException::new);
+        workoutDB.setId(UUID.randomUUID().toString());
+        workoutDB.setName(createWorkoutModel.getName());
+        workoutDB.setDescription(createWorkoutModel.getDescription());
+        if (durationOfWorkout.contains(createWorkoutModel.getDuration())) {
+            workoutDB.setDuration(createWorkoutModel.getDuration());
+        } else {
+            throw new InvalidWorkoutBodyException();
+        }
+        workoutDB.setDifficulty(createWorkoutModel.getDifficulty());
+        workoutDB.setUser(user);
+        workoutsRepository.save(workoutDB);
+        return new CreateWorkoutModel(workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(),
+                workoutDB.getDifficulty(), workoutDB.getTrainerId());
+
     }
 
     //get all workouts/filters
@@ -83,7 +80,7 @@ public class WorkoutsService {
         if (workoutsRepository.existsById(id)) {
             WorkoutDB workoutById = workoutsRepository.findById(id).get();
             return new WorkoutModel(workoutById.getId(), workoutById.getName(), workoutById.getDescription(),
-                    workoutById.getDuration(), workoutById.getDifficulty(), workoutById.getTrainerId(),workoutById.getUser());
+                    workoutById.getDuration(), workoutById.getDifficulty(), workoutById.getTrainerId(), workoutById.getUser());
         } else {
             throw new WorkoutNotFoundException();
         }
@@ -92,12 +89,11 @@ public class WorkoutsService {
     //update workout
     public UpdateWorkoutModel updateWorkout(String id, UpdateWorkoutModel updateWorkoutModel) {
         List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(updateWorkoutModel.getTrainerId());
-        userRoles.forEach(userRole -> {
-            String trainer = "Trainer";
-            if (!trainer.equals(userRole.getRoleDB().getName())) {
-                throw new AccessForbiddenException();
-            }
-        });
+        String targetRole = "Trainer";
+        boolean ifUserHasPermission = userRoles.stream().anyMatch(userRoleDB -> targetRole.equals(userRoleDB.getRoleDB().getName()));
+        if (!ifUserHasPermission) {
+            throw new AccessForbiddenException();
+        }
         UserDB userDB = usersRepository.findById(updateWorkoutModel.getTrainerId()).orElse(null);
         if (workoutsRepository.existsById(id)) {
             WorkoutDB workoutDBtoUpdate = workoutsRepository.findById(id).get();

@@ -27,60 +27,47 @@ public class UserRolesService {
     @Autowired
     IUserRoleRepository userRoleRepository;
 
+    //create
     public CreateUserRoleModel createUserRole(CreateUserRoleModel createUserRoleModel) {
-        List<UserRoleDB> userRoles = userRoleRepository.findByUserIdOrRoleId(createUserRoleModel.getUserID(),createUserRoleModel.getRoleID());
         UserRoleDB userRoleDB = new UserRoleDB();
-        UserDB userDB = usersRepository.findById(createUserRoleModel.getUserID()).orElse(null);
-        RoleDB roleDB = rolesRepository.findById(createUserRoleModel.getRoleID()).orElse(null);
-        if (userDB != null) {
-            if (roleDB != null) {
-                userRoleDB.setId(UUID.randomUUID().toString());
-
-                userRoles.forEach(userRole -> {
-                    String existingRole = userRole.getRoleID();
-                    String existingUser = userRole.getUserID();
-                    if (existingUser.equals(createUserRoleModel.getUserID()) &&
-                            existingRole.equals(createUserRoleModel.getRoleID())) {
-                        throw new UserRoleAlreadyExists();
-                    }
-                });
-                userRoleDB.setUserDB(userDB);
-                userRoleDB.setRoleDB(roleDB);
-                userRoleDB.setCreatedOn(createUserRoleModel.getCreatedOn());
-                userRoleRepository.save(userRoleDB);
-                return new CreateUserRoleModel(userRoleDB.getUserID(), userRoleDB.getRoleID(), userRoleDB.getCreatedOn());
-            } else {
-                throw new RoleNotFoundException();
+        UserDB userDB = usersRepository.findById(createUserRoleModel.getUserID()).orElseThrow(UserNotFoundException::new);
+        RoleDB roleDB = rolesRepository.findById(createUserRoleModel.getRoleID()).orElseThrow(RoleNotFoundException::new);
+        List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(createUserRoleModel.getUserID());
+        for (UserRoleDB userRole : userRoles) {
+            if (userRole.getUserID().equals(createUserRoleModel.getUserID()) && userRole.getRoleID().equals(createUserRoleModel.getRoleID())) {
+                throw new UserRoleAlreadyExists();
             }
-        } else {
-            throw new UserNotFoundException();
         }
+        userRoleDB.setId(UUID.randomUUID().toString());
+        userRoleDB.setUserDB(userDB);
+        userRoleDB.setRoleDB(roleDB);
+        userRoleDB.setCreatedOn(createUserRoleModel.getCreatedOn());
+        userRoleRepository.save(userRoleDB);
+        return new CreateUserRoleModel(userRoleDB.getUserID(), userRoleDB.getRoleID(), userRoleDB.getCreatedOn());
     }
-
+    //update
     public UpdateUserRoleModel updateUserRole(String id, UpdateUserRoleModel updateUserRoleModel) {
-        UserDB userDB = usersRepository.findById(updateUserRoleModel.getUserID()).orElse(null);
-        RoleDB roleDB = rolesRepository.findById(updateUserRoleModel.getRoleID()).orElse(null);
+        List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(updateUserRoleModel.getUserID());
+        for (UserRoleDB userRole : userRoles) {
+            if (userRole.getUserID().equals(updateUserRoleModel.getUserID()) && userRole.getRoleID().equals(updateUserRoleModel.getRoleID())) {
+                throw new UserRoleAlreadyExists();
+            }
+        }
+        UserDB userDB = usersRepository.findById(updateUserRoleModel.getUserID()).orElseThrow(UserNotFoundException::new);
+        RoleDB roleDB = rolesRepository.findById(updateUserRoleModel.getRoleID()).orElseThrow(RoleNotFoundException::new);
         if (userRoleRepository.existsById(id)) {
             UserRoleDB userRoleToUpdate = userRoleRepository.findById(id).get();
-            if (userDB != null) {
-                if (roleDB != null) {
-                    userRoleToUpdate.setUserDB(userDB);
-                    userRoleToUpdate.setRoleDB(roleDB);
-                    userRoleToUpdate.setCreatedOn(updateUserRoleModel.getCreatedOn());
-                    UserRoleDB updatedUserRole = userRoleRepository.save(userRoleToUpdate);
-                    return new UpdateUserRoleModel(updatedUserRole.getUserID(), updatedUserRole.getRoleID(),
-                            updatedUserRole.getCreatedOn());
-                } else {
-                    throw new RoleNotFoundException();
-                }
-            } else {
-                throw new UserNotFoundException();
-            }
+            userRoleToUpdate.setUserDB(userDB);
+            userRoleToUpdate.setRoleDB(roleDB);
+            userRoleToUpdate.setCreatedOn(updateUserRoleModel.getCreatedOn());
+            UserRoleDB updatedUserRole = userRoleRepository.save(userRoleToUpdate);
+            return new UpdateUserRoleModel(updatedUserRole.getUserID(), updatedUserRole.getRoleID(),
+                    updatedUserRole.getCreatedOn());
         } else {
             throw new UserRoleNotFoundException();
         }
     }
-
+    //by id
     public UserRoleModel getUserRoleById(String id) {
         if (userRoleRepository.existsById(id)) {
             UserRoleDB userRoleDB = userRoleRepository.findById(id).get();
@@ -90,7 +77,7 @@ public class UserRolesService {
             throw new UserRoleNotFoundException();
         }
     }
-
+    //get all
     public List<UserRoleModel> getAllUserRoles(String userID, String roleID) {
         List<UserRoleModel> userRoleList = new ArrayList<>();
         if (userID != null || roleID != null) {
@@ -105,7 +92,7 @@ public class UserRolesService {
         }
         return userRoleList;
     }
-
+    //delete
     public void deleteUserRole(String id) {
         if (userRoleRepository.existsById(id)) {
             userRoleRepository.deleteById(id);

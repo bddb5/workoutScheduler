@@ -20,28 +20,31 @@ public class RolesService {
     @Autowired
     IRolesRepository rolesRepository;
 
-
+    //create
     public CreateRoleModel createRole(CreateRoleModel createRoleModel) {
-        List<RoleDB> roles = rolesRepository.findByName(createRoleModel.getName());
-        RoleDB roleDB = new RoleDB();
-        roleDB.setId(UUID.randomUUID().toString());
-        roles.forEach(role -> {
-            String existingRoleName = role.getName();
-            if (existingRoleName.equals(createRoleModel.getName())) {
+        List<RoleDB> roleList = rolesRepository.findAll();
+        for(RoleDB role : roleList) {
+            if (role.getName().equals(createRoleModel.getName())) {
                 throw new RoleAlreadyExists();
             }
-
-        });
+        }
+        RoleDB roleDB = new RoleDB();
+        roleDB.setId(UUID.randomUUID().toString());
         roleDB.setName(createRoleModel.getName());
         roleDB.setDescription(createRoleModel.getDescription());
         rolesRepository.save(roleDB);
         return new CreateRoleModel(createRoleModel.getName(), createRoleModel.getDescription());
     }
-
+    //update
     public UpdateRoleModel updateRole(String id, UpdateRoleModel updateRoleModel) {
+        List<RoleDB> roleList = rolesRepository.findAll();
+        for(RoleDB role : roleList){
+            if(role.getName().equals(updateRoleModel.getName())){
+                throw new RoleAlreadyExists();
+            }
+        }
         if (rolesRepository.existsById(id)) {
             RoleDB roleDBtoUpdate = rolesRepository.findById(id).get();
-
             roleDBtoUpdate.setName(updateRoleModel.getName());
             roleDBtoUpdate.setDescription(updateRoleModel.getDescription());
             RoleDB updatedRole = rolesRepository.save(roleDBtoUpdate);
@@ -51,7 +54,7 @@ public class RolesService {
             throw new RoleNotFoundException();
         }
     }
-
+    //by id
     public RoleModel getRoleById(String id) {
         if (rolesRepository.existsById(id)) {
             RoleDB roleById = rolesRepository.findById(id).get();
@@ -60,14 +63,11 @@ public class RolesService {
             throw new RoleNotFoundException();
         }
     }
-
-    public List<RoleModel> getAllRoles(String name){
+    //get all
+    public List<RoleModel> getAllRoles(){
         List<RoleModel> roleList = new ArrayList<>();
-        if(name != null){
-            rolesRepository.findByName(name).forEach(roleDB -> roleList.add(new RoleModel(roleDB.getId(),roleDB.getName(),roleDB.getDescription())));
-        }else {
             rolesRepository.findAll().forEach(roleDB -> roleList.add(new RoleModel(roleDB.getId(), roleDB.getName(), roleDB.getDescription())));
-        }
+
         return roleList;
     }
     //delete role

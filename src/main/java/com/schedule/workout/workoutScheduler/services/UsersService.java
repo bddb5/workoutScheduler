@@ -22,7 +22,6 @@ public class UsersService {
     //create user
     public CreateUserModel createUser(CreateUserModel createUserModel) {
         UserDB userDB = new UserDB();
-
         userDB.setId(UUID.randomUUID().toString());
         userDB.setFirstName(createUserModel.getFirstName());
         userDB.setLastName(createUserModel.getLastName());

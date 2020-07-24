@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface IRolesRepository extends CrudRepository<RoleDB,String> {
     List<RoleDB> findAll();
-    List<RoleDB> findByName(String name);
+    RoleDB findByName(String name);
 }
