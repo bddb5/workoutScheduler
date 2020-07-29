@@ -1,9 +1,13 @@
 package com.schedule.workout.workoutScheduler.database.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.*;
 import javax.persistence.Table;
 import javax.validation.constraints.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -33,6 +37,10 @@ public class UserDB {
     @Column(name = "phone_number")
     @Size(min = 6, max = 10)
     private String phoneNumber;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "userDB",cascade = CascadeType.ALL)
+    private List<UserRoleDB> roles = new ArrayList<>();
 
     public UserDB() {
     }
@@ -92,6 +100,14 @@ public class UserDB {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public List<UserRoleDB> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<UserRoleDB> roles) {
+        this.roles = roles;
     }
 }
 

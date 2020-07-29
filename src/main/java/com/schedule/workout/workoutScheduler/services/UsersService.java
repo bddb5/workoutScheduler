@@ -8,6 +8,7 @@ import com.schedule.workout.workoutScheduler.database.model.UserDB;
 import com.schedule.workout.workoutScheduler.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,6 @@ public class UsersService {
     //create user
     public CreateUserModel createUser(CreateUserModel createUserModel) {
         UserDB userDB = new UserDB();
-
         userDB.setId(UUID.randomUUID().toString());
         userDB.setFirstName(createUserModel.getFirstName());
         userDB.setLastName(createUserModel.getLastName());
@@ -88,9 +88,3 @@ public class UsersService {
         }
     }
 }
-
-
-
-
-
-
