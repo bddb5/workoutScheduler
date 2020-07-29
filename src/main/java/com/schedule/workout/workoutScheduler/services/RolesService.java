@@ -20,7 +20,7 @@ public class RolesService {
     @Autowired
     IRolesRepository rolesRepository;
 
-    //create
+    //create role
     public CreateRoleModel createRole(CreateRoleModel createRoleModel) {
         List<RoleDB> roleList = rolesRepository.findAll();
         for(RoleDB role : roleList) {
@@ -35,7 +35,7 @@ public class RolesService {
         rolesRepository.save(roleDB);
         return new CreateRoleModel(createRoleModel.getName(), createRoleModel.getDescription());
     }
-    //update
+    //update role
     public UpdateRoleModel updateRole(String id, UpdateRoleModel updateRoleModel) {
         List<RoleDB> roleList = rolesRepository.findAll();
         for(RoleDB role : roleList){
@@ -54,7 +54,7 @@ public class RolesService {
             throw new RoleNotFoundException();
         }
     }
-    //by id
+    //get role by id
     public RoleModel getRoleById(String id) {
         if (rolesRepository.existsById(id)) {
             RoleDB roleById = rolesRepository.findById(id).get();
@@ -63,7 +63,7 @@ public class RolesService {
             throw new RoleNotFoundException();
         }
     }
-    //get all
+    //get all roles
     public List<RoleModel> getAllRoles(){
         List<RoleModel> roleList = new ArrayList<>();
             rolesRepository.findAll().forEach(roleDB -> roleList.add(new RoleModel(roleDB.getId(), roleDB.getName(), roleDB.getDescription())));

@@ -80,6 +80,9 @@ public class WorkoutsController {
         } catch (InvalidWorkoutBodyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .build();
+        } catch (AccessForbiddenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .build();
         }
     }
 

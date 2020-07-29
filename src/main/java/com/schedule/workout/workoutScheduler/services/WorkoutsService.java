@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
 import static java.util.Arrays.asList;
 
 @Service
@@ -33,12 +32,16 @@ public class WorkoutsService {
     //duration
     List<Integer> durationOfWorkout = asList(20, 30, 45, 60);
 
+    //if user is in role of a trainer
+    private boolean ifUserHasPermission(List<UserRoleDB> userRoles) {
+        String targetRole = "Trainer";
+        return userRoles.stream().anyMatch(userRoleDB -> targetRole.equals(userRoleDB.getRoleDB().getName()));
+    }
+
     //create  workout
     public CreateWorkoutModel createWorkout(CreateWorkoutModel createWorkoutModel) {
         List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(createWorkoutModel.getTrainerId());
-        String targetRole = "Trainer";
-        boolean ifUserHasPermission = userRoles.stream().anyMatch(userRoleDB -> targetRole.equals(userRoleDB.getRoleDB().getName()));
-        if (!ifUserHasPermission) {
+        if (!ifUserHasPermission(userRoles)) {
             throw new AccessForbiddenException();
         }
         WorkoutDB workoutDB = new WorkoutDB();
@@ -56,7 +59,6 @@ public class WorkoutsService {
         workoutsRepository.save(workoutDB);
         return new CreateWorkoutModel(workoutDB.getName(), workoutDB.getDescription(), workoutDB.getDuration(),
                 workoutDB.getDifficulty(), workoutDB.getTrainerId());
-
     }
 
     //get all workouts/filters
@@ -89,9 +91,7 @@ public class WorkoutsService {
     //update workout
     public UpdateWorkoutModel updateWorkout(String id, UpdateWorkoutModel updateWorkoutModel) {
         List<UserRoleDB> userRoles = userRoleRepository.findRolesByUserId(updateWorkoutModel.getTrainerId());
-        String targetRole = "Trainer";
-        boolean ifUserHasPermission = userRoles.stream().anyMatch(userRoleDB -> targetRole.equals(userRoleDB.getRoleDB().getName()));
-        if (!ifUserHasPermission) {
+        if (!ifUserHasPermission(userRoles)) {
             throw new AccessForbiddenException();
         }
         UserDB userDB = usersRepository.findById(updateWorkoutModel.getTrainerId()).orElse(null);
@@ -124,23 +124,3 @@ public class WorkoutsService {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
