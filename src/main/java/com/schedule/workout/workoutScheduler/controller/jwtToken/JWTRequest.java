@@ -1,9 +1,11 @@
 package com.schedule.workout.workoutScheduler.controller.jwtToken;
 
+import javax.validation.constraints.NotNull;
 
 public class JWTRequest {
-
+    @NotNull
     private String email;
+    @NotNull
     private String password;
 
     public JWTRequest(){}

@@ -14,6 +14,6 @@ public interface IUsersRepository extends CrudRepository<UserDB, String> {
     @Query("from UserDB udb where udb.firstName = :firstName or udb.lastName = :lastName")
     List<UserDB> filterUsersByFirstNameAndLastName(String firstName, String lastName);
     @Query("from UserDB udb where udb.email = :email and udb.password = :password")
-    UserDB findUsersByEmailAndPassword(String email,String password);
+    UserDB findUserByEmailAndPassword(String email,String password);
 
 }

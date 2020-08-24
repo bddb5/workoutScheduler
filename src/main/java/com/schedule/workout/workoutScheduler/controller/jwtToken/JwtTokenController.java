@@ -13,14 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 
-
 @Controller
 public class JwtTokenController {
     @Autowired
     JwtTokenService tokenService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/token")
-    public ResponseEntity<?> userLogin(@Valid @RequestBody JWTRequest jwtRequest) {
+    public ResponseEntity<?> createToken(@Valid @RequestBody JWTRequest jwtRequest) {
         try {
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -41,7 +40,6 @@ public class JwtTokenController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).
                     build();
         }
-
-
     }
+
 }

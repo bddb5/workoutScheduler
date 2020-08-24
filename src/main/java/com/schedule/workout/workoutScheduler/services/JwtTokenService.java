@@ -28,22 +28,19 @@ public class JwtTokenService {
 
     //validate user login and create new jwt
     public String createJwtToken(JWTRequest jwtRequest){
-
-        UserDB userByEmail = usersRepository.findUsersByEmailAndPassword(jwtRequest.getEmail(),jwtRequest.getPassword());
-        if(jwtRequest.getEmail() == null || jwtRequest.getPassword() == null || userByEmail == null){
+        UserDB userByEmail = usersRepository.findUserByEmailAndPassword(jwtRequest.getEmail(),jwtRequest.getPassword());
+        if(userByEmail == null){
             throw new UnauthorizedException();
         }
             String subject = userByEmail.getId();
-            return "JWT : " + Jwts.builder().setSubject(subject).setIssuedAt(Date.from(now)).
+            return Jwts.builder().setSubject(subject).setIssuedAt(Date.from(now)).
                     setExpiration(Date.from(expirationTime)).signWith(key).compact();
-
     }
+
     //get user id from token
     public String getUserFromToken(String jwtToken) throws UnauthorizedException {
-
         Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwtToken);
-            return "UserID : " + claims.getBody().getSubject();
-
+            return claims.getBody().getSubject();
     }
 }
 
