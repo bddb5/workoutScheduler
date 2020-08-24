@@ -1,6 +1,7 @@
 package com.schedule.workout.workoutScheduler.database.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.*;
@@ -33,6 +34,9 @@ public class UserDB {
     @Email
     @Column(name = "email")
     private String email;
+    @NotEmpty
+    @Column(name = "password")
+    private String password;
     @NotEmpty
     @Column(name = "phone_number")
     @Size(min = 6, max = 10)
@@ -92,6 +96,16 @@ public class UserDB {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonIgnore
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhoneNumber() {
