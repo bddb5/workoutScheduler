@@ -27,6 +27,7 @@ public class UsersService {
         userDB.setLastName(createUserModel.getLastName());
         userDB.setAge(createUserModel.getAge());
         userDB.setEmail(createUserModel.getEmail());
+        userDB.setPassword(createUserModel.getPassword());
         userDB.setPhoneNumber(createUserModel.getPhoneNumber());
         usersRepository.save(userDB);
 
@@ -43,6 +44,7 @@ public class UsersService {
             userDBtoUpdate.setLastName(updateUserModel.getLastName());
             userDBtoUpdate.setAge(updateUserModel.getAge());
             userDBtoUpdate.setEmail(updateUserModel.getEmail());
+            userDBtoUpdate.setPassword(updateUserModel.getPassword());
             userDBtoUpdate.setPhoneNumber(updateUserModel.getPhoneNumber());
             UserDB updatedUser = usersRepository.save(userDBtoUpdate);
 

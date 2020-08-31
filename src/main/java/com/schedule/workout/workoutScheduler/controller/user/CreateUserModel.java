@@ -1,5 +1,8 @@
 package com.schedule.workout.workoutScheduler.controller.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.Column;
 import javax.validation.constraints.*;
 
 public class CreateUserModel {
@@ -19,13 +22,16 @@ public class CreateUserModel {
     @Email
     private String email;
     @NotEmpty
+    @Column(name = "password")
+    private String password;
+    @NotEmpty
     @Size(min = 6, max = 10)
     private String phoneNumber;
 
     public CreateUserModel() {
     }
 
-    public CreateUserModel(String id, String firstName, String lastName, int age, String email, String phoneNumber) {
+    public CreateUserModel(String id, String firstName, String lastName, int age, String email,String phoneNumber) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -72,6 +78,12 @@ public class CreateUserModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getPhoneNumber() {
